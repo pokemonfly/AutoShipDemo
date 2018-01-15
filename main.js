@@ -1,19 +1,44 @@
-$( function ( ) {
-    $( document ).on( 'click', '.create-grid', function ( ) {
-        var w = +$( '#width' ).val( ),
-            h = +$( '#height' ).val( );
+var map = [],
+    dragType = null;
+$( function () {
+    $( document ).on( 'click', '.create-grid', function () {
+        var w = + $( '#width' ).val(),
+            h = + $( '#height' ).val();
         createMap( w, h );
-    })
-})
-var map = [ ]
+    } ).on( 'dragstart', '.drag-item', function ( e ) {
+        dragType = $( this ).attr( 'data-type' );
+        console.log(dragType)
+    } ).on( 'dragover', '.ceil', function ( e ) {
+        // $(this).addClass('drag-over')
+        e.preventDefault();
+        e.stopPropagation();
+    } ).on( 'drop', '.ceil', function ( e ) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $t = $( this ),
+            row = $t.attr( 'data-row' ),
+            col = $t.attr( 'data-col' );
+        $( this ).addClass( 'ceil-ship ceil-type' + dragType )
+    } )
+} )
 
 function createMap( w, h ) {
-    map = Array( h ).fill(Array( w ).fill( 0 ))
+    map = Array( h + 1 ).fill( Array( w + 1  ).fill( 0 ) )
     var html = map.map( function ( row, rowIndex ) {
         var rowHtml = row.map( function ( col, colIndex ) {
-            return `<div id="${ row }-${ col }" class="ceil"></div>`
-        }).join( '' )
+            if (!rowIndex) {
+                var str = colIndex > 0 ?  String.fromCharCode(64 + colIndex) : ''
+                return '<div class="ceil label">' + str  + '</div>'
+            }
+            if (!colIndex ) {
+                return '<div class="ceil label">' + rowIndex  + '</div>'
+            }
+            return `<div id="${ rowIndex}-${ colIndex}" data-row="${ rowIndex}" data-col="${ colIndex }"  class="ceil"></div>`
+        } ).join( '' )
         return `<div class="row">${ rowHtml }</div>`
-    }).join( '' )
+    } ).join( '' )
     $( '.grid' ).html( html )
 }
+function addTarget( pos, type ) {}
+
+function aStar( start, end ) {}

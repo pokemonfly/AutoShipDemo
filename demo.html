@@ -14,6 +14,7 @@
             </div>
             <div class="drag-panel">
                   <span>拖拽图标到地图上</span>
+                  <span class="drag-item" data-type="0" draggable="true"> <img src='./icon/0.png'/> </span>
                   <span class="drag-item" data-type="1" draggable="true"> <img src='./icon/1.png'/> </span>
                   <span class="drag-item" data-type="2" draggable="true"> <img src='./icon/2.png'/> </span>
                   <span class="drag-item" data-type="3" draggable="true"> <img src='./icon/3.png'/> </span>
@@ -30,11 +31,47 @@
                 <input id="height" type="number" value="4" min="2"></input>
             </div>
             <button class="create-grid">创建地图</button>
+            <button class="create-grid-load">读取预设</button>
             <hr>
-
-            <button class="commit">计算</button>
+            <button class="update">更新地图</button>
+            <button class="calc">计算</button>
+            <button class="move">移动</button>
+            <div class="row">
+                <p>流程： </p>
+                <p>1 【创建地图】or 【读取预设】  初始化地图大小 </p>
+                <p>2 （可选）【拖拽图标】 标记我方出生点 标记敌舰刷新点 </p>
+                <p>3 【更新地图】生成双方舰队 计算优先点（舰队B被包围，或者boss路必经的唯一点）</p>
+                <p>4 （可选）【拖拽图标】or 【更新地图】 更新舰队 我方出生点大于2个则随机选2个 杂鱼如果没有标记刷新点则随机刷新  <br>
+                     因为弹药的限制，最多可以刷新10 + 3（弹药拾取）次杂鱼，杂鱼最多刷新12只。 <br>
+                     初始 2 ~ 5只（视地图大小），每次战后后新刷新0~2只，1 ~ 6战后刷新boss
+                </p>
+                <p>5 【计算】  <br>
+                     如果当前舰队弹药为0 强制切换舰队 <br>
+                     如果优先点 and 舰队B位置可以移动过去 path = 优先点
+                     如果问号出现
+                         path = 当前舰队 寻找到问号的路径 (杂鱼格子视为高cost可通过)  <br>
+                         如果path中存在杂鱼 <br>
+                            path 使用当前舰队 寻找该杂鱼路径<br>
+                     如果 boss点出现 <br>
+                        path = 使用舰队B位置 寻找到boss的路径 (杂鱼格子视为高cost可通过)  <br>
+                        如果path中存在杂鱼 <br>
+                            path 使用当前舰队 寻找该杂鱼路径<br>
+                     否则 <br>
+                        如果当前舰队弹药 &lt; 3 and  地图有弹药拾取点 path = 寻找弹药拾取点的路径
+                        计算当前舰队 可以到达的杂鱼点 - pointA[] <br>
+                        计算舰队B 模拟到达的{boss点可能刷新位置， 优先点}（杂鱼格子视为高cost可通过） - pathB[]<br>
+                        如果pathB[]中存在杂鱼 , 标记这些杂鱼点为高权重pointB[]
+                        如果pointA多个  <br>
+                            path = 选择pointB[]中出现的pointA点  <br>
+                        否则 path = 最近and最弱。 <br> 
+                        （考虑到移动过程中有额外遇敌空袭风险， 距离 X格 视为目标怪强度 + 1）
+                </p>
+                <p>6 【移动】使用上一步计算的path，移动到目标地点  </p>
+                <p>7 重复4~6 直到结束</p>
+            </div>
         </div>
     </div>
+
     <script src="jquery-3.2.1.min.js"></script>
     <script src="main.js"></script>
 </body>

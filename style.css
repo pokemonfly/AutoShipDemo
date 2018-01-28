@@ -105,3 +105,10 @@
     background-size: 35px;
     background-repeat: no-repeat;
 }
+
+.ceil-type9a:before {
+    background-image: url('./icon/9a.png');
+}
+.ceil-type9b:before {
+    background-image: url('./icon/9b.png');
+}
